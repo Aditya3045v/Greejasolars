@@ -1,55 +1,25 @@
 "use client";
 import { createContext, useContext, useEffect, useState } from "react";
-import { motion, useScroll, useSpring, AnimatePresence, useInView } from "framer-motion";
-import { useRef } from "react";
-
-/* ---- EDIT ME: clinic details ---- */
-const CLINIC = {
-  phone: "+91 00000 00000",
-  whatsapp: "910000000000", // country code + number, no symbols
-  email: "hello@hmshomeopathy.example",
-  address: "क्लिनिक का पता यहाँ जोड़ें · Add clinic address",
-  hours: { hi: "सोम – शनि · सुबह 9:00 – शाम 7:00", en: "Mon – Sat · 9:00 AM – 7:00 PM" } as Bi,
-};
+import { motion, useScroll, useSpring, AnimatePresence } from "framer-motion";
+import { CLINIC, CONDITIONS, BENEFITS, STEPS, STORIES, FAQS, NEARBY, type Bi } from "./content";
 
 type Lang = "hi" | "en";
-type Bi = { hi: string; en: string };
 const LangCtx = createContext<{ lang: Lang; setLang: (l: Lang) => void }>({ lang: "hi", setLang: () => {} });
 const useT = () => { const { lang } = useContext(LangCtx); return (b: Bi) => b[lang]; };
-
 const ease = [0.22, 1, 0.36, 1] as const;
+const tel = `tel:${CLINIC.phone.replace(/\s/g, "")}`;
+const wa = (m?: string) => `https://wa.me/${CLINIC.whatsapp}${m ? `?text=${encodeURIComponent(m)}` : ""}`;
+
 function Reveal({ children, delay = 0, y = 40, className }: { children: React.ReactNode; delay?: number; y?: number; className?: string }) {
   return (
     <motion.div className={className} initial={{ opacity: 0, y }} whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }} transition={{ duration: 0.9, delay, ease }}>
+      viewport={{ once: true, margin: "-70px" }} transition={{ duration: 0.85, delay, ease }}>
       {children}
     </motion.div>
   );
 }
-
-function Counter({ to, suffix = "" }: { to: number; suffix?: string }) {
-  const ref = useRef<HTMLElement>(null);
-  const inView = useInView(ref, { once: true });
-  const [n, setN] = useState(0);
-  useEffect(() => {
-    if (!inView) return;
-    let raf = 0; const t0 = performance.now();
-    const tick = (t: number) => {
-      const p = Math.min((t - t0) / 1600, 1);
-      setN(Math.round(to * (1 - Math.pow(1 - p, 3))));
-      if (p < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [inView, to]);
-  return <b ref={ref}>{n.toLocaleString()}{suffix}</b>;
-}
-
-const Leaf = ({ s = 80, r = 0, c = "#7a9a6e" }: { s?: number; r?: number; c?: string }) => (
-  <svg width={s} height={s} viewBox="0 0 100 100" style={{ transform: `rotate(${r}deg)` }}>
-    <path d="M50 95C20 70 12 35 50 5c38 30 30 65 0 90Z" fill={c} />
-    <path d="M50 95V20" stroke="#f6f1e7" strokeWidth="2" opacity=".6" />
-  </svg>
+const Head = ({ eyebrow, children, lead }: { eyebrow: string; children: React.ReactNode; lead?: string }) => (
+  <Reveal><span className="eyebrow">{eyebrow}</span><h2>{children}</h2>{lead && <p className="lead">{lead}</p>}</Reveal>
 );
 
 function LangSwitch() {
@@ -72,17 +42,17 @@ function Nav() {
     return () => window.removeEventListener("scroll", f);
   }, []);
   const items: [Bi, string][] = [
-    [{ hi: "हमारे बारे में", en: "About" }, "#about"], [{ hi: "उपचार", en: "Care" }, "#care"],
-    [{ hi: "सेवा क्षेत्र", en: "Areas" }, "#areas"], [{ hi: "प्रक्रिया", en: "Process" }, "#process"],
-    [{ hi: "सवाल-जवाब", en: "FAQ" }, "#faq"],
+    [{ hi: "तकलीफ़ें", en: "Conditions" }, "#care"], [{ hi: "फ़ायदे", en: "Benefits" }, "#benefits"],
+    [{ hi: "डॉक्टर", en: "Doctor" }, "#doctor"], [{ hi: "क्लिनिक", en: "Clinic" }, "#visit"], [{ hi: "सवाल-जवाब", en: "FAQ" }, "#faq"],
   ];
   return (
     <>
+      <div className="topbar"><span>📍 {t(CLINIC.town)}</span><span className="sep">·</span><span>🕘 {t(CLINIC.hours)}</span></div>
       <motion.nav className={`nav ${sc ? "scrolled" : ""}`} initial={{ y: -80 }} animate={{ y: 0 }} transition={{ duration: 0.9, ease }}>
         <div className="wrap">
           <a href="#top" className="logo">
-            <svg width="38" height="38" viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" fill="#2f4a3a" /><path d="M50 80C32 66 28 44 50 24c22 20 18 42 0 56Z" fill="#7a9a6e" /><path d="M50 80V38" stroke="#f6f1e7" strokeWidth="3" /></svg>
-            <span>HMS<small>{t({ hi: "होम्योपैथी सेंटर · सीमांचल", en: "Homeopathy Center · Seemanchal" })}</small></span>
+            <svg width="40" height="40" viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" fill="#2f4a3a" /><path d="M50 80C32 66 28 44 50 24c22 20 18 42 0 56Z" fill="#7a9a6e" /><path d="M50 80V38" stroke="#f6f1e7" strokeWidth="3" /></svg>
+            <span>HMS<small>{t({ hi: "होम्योपैथी सेंटर · बहादुरगंज", en: "Homeopathy Center · Bahadurganj" })}</small></span>
           </a>
           <div className="links">
             {items.map(([b, h]) => <a key={h} href={h} className="l">{t(b)}</a>)}
@@ -109,134 +79,96 @@ function Nav() {
 function Hero() {
   const t = useT();
   const { lang } = useContext(LangCtx);
-  const words = t({ hi: "सीमांचल के हर परिवार के लिए सौम्य उपचार", en: "Gentle healing for every Seemanchal family." }).split(" ");
-  const emIdx = lang === "hi" ? 6 : 1;
+  const words = t({ hi: "बहादुरगंज में आपके परिवार का भरोसेमंद होम्योपैथी केंद्र", en: "Bahadurganj's trusted homeopathy center for your whole family" }).split(" ");
+  const em = lang === "hi" ? [4, 5] : [2, 3];
+  const chips: Bi[] = [{ hi: "बच्चे से बुज़ुर्ग तक", en: "Children to elders" }, { hi: "45+ मिनट का परामर्श", en: "45+ min consultation" }, { hi: "WhatsApp पर फॉलो-अप", en: "WhatsApp follow-ups" }, { hi: "सीमांचल के 4 जिलों से मरीज़", en: "Patients from 4 Seemanchal districts" }];
   return (
     <header className="hero" id="top">
+      <div className="bgimg" style={{ backgroundImage: "url(/images/hero-field.jpg)", opacity: 0.2 }} />
       <div className="wrap">
         <div>
-          <motion.span className="eyebrow" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>{t({ hi: "क्लासिकल होम्योपैथी · हर उम्र के लिए", en: "Classical homeopathy · All ages" })}</motion.span>
+          <motion.span className="eyebrow" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>{t({ hi: "HMS होम्योपैथी सेंटर · किशनगंज, बिहार", en: "HMS Homeopathy Center · Kishanganj, Bihar" })}</motion.span>
           <h1>
             {words.map((w, i) => (
               <span key={i} style={{ display: "inline-block", overflow: "hidden", verticalAlign: "bottom", marginRight: "0.25em" }}>
-                <motion.span style={{ display: "inline-block" }} initial={{ y: "110%" }} animate={{ y: 0 }} transition={{ duration: 0.9, delay: 0.3 + i * 0.09, ease }}>
-                  {i === emIdx ? <em>{w}</em> : w}
+                <motion.span style={{ display: "inline-block" }} initial={{ y: "110%" }} animate={{ y: 0 }} transition={{ duration: 0.9, delay: 0.3 + i * 0.08, ease }}>
+                  {em.includes(i) ? <em>{w}</em> : w}
                 </motion.span>
               </span>
             ))}
           </h1>
           <motion.p className="lead" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.1, duration: 0.8 }}>
-            {t({ hi: "HMS होम्योपैथी सेंटर में हम आपकी पूरी कहानी — शरीर, मन और जीवनशैली — ध्यान से सुनते हैं, फिर आपके और आपके परिवार के लिए सुरक्षित, व्यक्तिगत दवा चुनते हैं।", en: "At HMS Homeopathy Center we take time to understand your story — body, mind and lifestyle — and prescribe gentle, individualised remedies for you and your family." })}
+            {t({ hi: "बरसात की एलर्जी और त्वचा रोग से लेकर बच्चों की बार-बार की बीमारी और जोड़ों के दर्द तक — हम आपकी पूरी बात सुनकर सौम्य, व्यक्तिगत होम्योपैथिक इलाज देते हैं। अपने ही इलाक़े में।", en: "From monsoon allergies and skin problems to children's recurring illness and joint pain — we listen fully and offer gentle, personalised homeopathic care. Right here in your region." })}
           </motion.p>
           <motion.div className="cta-row" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.3, duration: 0.8 }}>
-            <a href="#book" className="btn btn-primary">{t({ hi: "परामर्श बुक करें →", en: "Book a consultation →" })}</a>
-            <a href={`tel:${CLINIC.phone.replace(/\s/g, "")}`} className="btn btn-call">📞 {t({ hi: "अभी कॉल करें", en: "Call now" })}</a>
-            <a href="#care" className="btn btn-ghost">{t({ hi: "उपचार देखें", en: "Explore our care" })}</a>
+            <a href="#book" className="btn btn-primary">{t({ hi: "अपॉइंटमेंट बुक करें →", en: "Book appointment →" })}</a>
+            <a href={tel} className="btn btn-call">📞 {t({ hi: "अभी कॉल करें", en: "Call now" })}</a>
           </motion.div>
-          <motion.div className="trust" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.6, duration: 1 }}>
-            <div><Counter to={4} /><span>{t({ hi: "जिलों में सेवा", en: "Districts served" })}</span></div>
-            <div><Counter to={45} suffix="+" /><span>{t({ hi: "मिनट की पहली मुलाक़ात", en: "Min first consultation" })}</span></div>
-            <div><Counter to={6} /><span>{t({ hi: "प्रमुख उपचार क्षेत्र", en: "Core areas of care" })}</span></div>
-          </motion.div>
+          <motion.ul className="chips" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.6 }}>
+            {chips.map((c) => <li key={c.en}>✓ {t(c)}</li>)}
+          </motion.ul>
         </div>
-
-        <motion.div className="art" initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.2, delay: 0.4, ease }}>
-          <div className="blob" />
-          <svg viewBox="0 0 400 400" fill="none">
-            <motion.g animate={{ rotate: [-2, 2, -2] }} transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }} style={{ originX: "50%", originY: "90%" }}>
-              <path d="M200 340V150" stroke="#f6f1e7" strokeWidth="5" strokeLinecap="round" />
-              {[[200, 130, 0, 70], [200, 190, -48, 56], [200, 190, 48, 56], [200, 250, -52, 50], [200, 250, 52, 50]].map(([x, y, r, l], i) => (
-                <motion.path key={i} d={`M${x} ${y + 60}C${x - 30} ${y + 30} ${x - 24} ${y - l / 2} ${x} ${y - l}c24 20 30 46 0 ${l + 60}Z`} fill={i % 2 ? "#cfe0c2" : "#e9f1de"}
-                  transform={`rotate(${r} ${x} ${y + 60})`} initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.9 + i * 0.15, duration: 0.8, ease }} style={{ transformOrigin: `${x}px ${y + 60}px` }} />
-              ))}
-            </motion.g>
-            {[[90, 300, 16], [120, 330, 11], [310, 310, 14], [280, 340, 9]].map(([x, y, r], i) => (
-              <motion.circle key={i} cx={x} cy={y} r={r} fill="#f6f1e7" animate={{ y: [0, -14, 0] }} transition={{ duration: 3 + i, repeat: Infinity, ease: "easeInOut" }} />
-            ))}
-            <motion.circle cx="320" cy="90" r="34" fill="#c9794a" animate={{ scale: [1, 1.08, 1] }} transition={{ duration: 5, repeat: Infinity }} />
-          </svg>
-          <motion.div className="float-card fc1" animate={{ y: [0, -10, 0] }} transition={{ duration: 5, repeat: Infinity }}><span className="ic">🌿</span><div><b>{t({ hi: "प्राकृतिक दवाएँ", en: "Natural remedies" })}</b>{t({ hi: "सौम्य और सुरक्षित", en: "Gentle & non-toxic" })}</div></motion.div>
-          <motion.div className="float-card fc2" animate={{ y: [0, 10, 0] }} transition={{ duration: 6, repeat: Infinity }}><span className="ic">💚</span><div><b>{t({ hi: "संपूर्ण देखभाल", en: "Whole-person care" })}</b>{t({ hi: "शरीर · मन · जीवन", en: "Body · mind · life" })}</div></motion.div>
+        <motion.div className="photo-arch" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.1, delay: 0.4, ease }}>
+          <img src="/images/consult.jpg" alt={t({ hi: "डॉक्टर मरीज़ से आराम से बात करते हुए", en: "Doctor consulting patiently with a patient" })} />
+          <motion.div className="float-card fc1" animate={{ y: [0, -10, 0] }} transition={{ duration: 5, repeat: Infinity }}><b>{t({ hi: "पहले सुनना", en: "Listening first" })}</b>{t({ hi: "फिर दवा चुनना", en: "then choosing the remedy" })}</motion.div>
+          <motion.div className="float-card fc2" animate={{ y: [0, 10, 0] }} transition={{ duration: 6, repeat: Infinity }}><b>📍 {t({ hi: "बहादुरगंज", en: "Bahadurganj" })}</b>{t({ hi: "किशनगंज, बिहार", en: "Kishanganj, Bihar" })}</motion.div>
         </motion.div>
       </div>
-      <motion.div className="leaf" style={{ left: "46%", top: "14%" }} animate={{ rotate: [0, 12, 0], y: [0, -12, 0] }} transition={{ duration: 8, repeat: Infinity }}><Leaf r={-20} /></motion.div>
     </header>
   );
 }
 
 function Marquee() {
   const t = useT();
-  const items: Bi[] = [{ hi: "व्यक्तिगत दवा", en: "Individualised remedies" }, { hi: "पूर्णिया", en: "Purnia" }, { hi: "बिना जल्दबाज़ी का परामर्श", en: "Unhurried consultations" }, { hi: "अररिया", en: "Araria" }, { hi: "बच्चों के लिए सुरक्षित", en: "Safe for children" }, { hi: "किशनगंज", en: "Kishanganj" }, { hi: "पुराने और नए रोग", en: "Chronic & acute care" }, { hi: "कटिहार", en: "Katihar" }];
-  const row = [...items, ...items];
-  return <div className="marquee" aria-hidden><div className="track">{row.map((x, i) => <span key={i}>{t(x)}</span>)}</div></div>;
+  const row = [...NEARBY, ...NEARBY];
+  return <div className="marquee" aria-label={t({ hi: "सेवा क्षेत्र", en: "Areas we serve" })}><div className="track">{row.map((x, i) => <span key={i}>{x}</span>)}</div></div>;
 }
 
-function About() {
-  const t = useT();
-  return (
-    <section className="about" id="about">
-      <div className="wrap">
-        <Reveal>
-          <div className="about-art">
-            <svg viewBox="0 0 400 500" fill="none">
-              <motion.path d="M200 480V180" stroke="#2f4a3a" strokeWidth="5" strokeLinecap="round" initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }} viewport={{ once: true }} transition={{ duration: 1.6 }} />
-              {[[200, 150, 0], [200, 250, -55], [200, 250, 55], [200, 340, -60], [200, 340, 60]].map(([x, y, r], i) => (
-                <motion.path key={i} d={`M${x} ${y + 70}C${x - 50} ${y + 30} ${x - 40} ${y - 30} ${x} ${y - 70}c40 40 50 90 0 140Z`} fill={i % 2 ? "#2f4a3a" : "#f6f1e7"} opacity={i % 2 ? 0.85 : 0.95}
-                  transform={`rotate(${r} ${x} ${y + 70})`} style={{ transformOrigin: `${x}px ${y + 70}px` }} initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }} transition={{ delay: 0.5 + i * 0.2, duration: 0.8, ease }} />
-              ))}
-            </svg>
-          </div>
-        </Reveal>
-        <div>
-          <Reveal><span className="eyebrow">{t({ hi: "HMS के बारे में", en: "About HMS" })}</span><h2>{t({ hi: "इलाज का एक शांत और ", en: "A calmer, more " })}<em>{t({ hi: "अपना-सा", en: "personal" })}</em>{t({ hi: " तरीका", en: " way to heal" })}</h2>
-            <p className="lead">{t({ hi: "होम्योपैथी केवल बीमारी नहीं, पूरे इंसान का इलाज करती है। HMS में हर परामर्श आराम से होता है, ताकि दवा आपके लक्षण, स्वभाव, नींद, पाचन और तनाव के अनुसार चुनी जा सके।", en: "Homeopathy treats the person, not just the diagnosis. Every consultation at HMS is unhurried, so your remedy fits you — your symptoms, temperament, sleep, digestion and stress." })}</p></Reveal>
-          <div className="pillars">
-            {([["🔍", { hi: "गहराई से केस-टेकिंग", en: "Deep case-taking" }, { hi: "पहली मुलाक़ात में आपकी पूरी सेहत की कहानी विस्तार से समझी जाती है।", en: "A detailed first visit to understand your complete health story." }], ["🌱", { hi: "सौम्य दवाएँ", en: "Gentle remedies" }, { hi: "अत्यंत सूक्ष्म मात्रा की दवाएँ, शिशु से बुज़ुर्ग तक के लिए उपयुक्त।", en: "Highly diluted medicines, suitable for infants to seniors." }], ["🤝", { hi: "लगातार साथ", en: "Ongoing partnership" }, { hi: "नियमित फॉलो-अप से प्रगति देखी जाती है और योजना बेहतर बनाई जाती है।", en: "Regular follow-ups to track progress and refine your plan." }]] as [string, Bi, Bi][]).map(([i, h, p], k) => (
-              <Reveal key={h.en} delay={k * 0.12} y={24}><div className="pillar"><i>{i}</i><div><h3>{t(h)}</h3><p>{t(p)}</p></div></div></Reveal>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-const CARE: [string, Bi, Bi][] = [
-  ["🧒", { hi: "बच्चों और शिशुओं का स्वास्थ्य", en: "Child & infant health" }, { hi: "बार-बार सर्दी-ज़ुकाम, एलर्जी, पाचन और विकास में सौम्य सहयोग।", en: "Recurrent colds, allergies, digestion and growth support, gently." }],
-  ["🌸", { hi: "महिलाओं का स्वास्थ्य", en: "Women's health" }, { hi: "मासिक चक्र, हार्मोन संतुलन, PCOS और जीवन के हर पड़ाव पर सहारा।", en: "Hormonal balance, cycles, PCOS support and wellbeing through life stages." }],
-  ["🧴", { hi: "त्वचा और बाल", en: "Skin & hair" }, { hi: "एक्ज़िमा, मुंहासे, सोरायसिस और बालों की समस्याओं में भीतर से देखभाल।", en: "Eczema, acne, psoriasis and hair concerns from the inside out." }],
-  ["🫁", { hi: "एलर्जी और साँस की तकलीफ़", en: "Allergy & respiratory" }, { hi: "मौसमी एलर्जी, साइनस, बार-बार खाँसी और दमा में देखभाल।", en: "Seasonal allergies, sinus troubles and recurring cough or asthma care." }],
-  ["🍃", { hi: "पाचन स्वास्थ्य", en: "Digestive health" }, { hi: "एसिडिटी, IBS, कब्ज़ और खाने से जुड़ी संवेदनशीलता।", en: "Acidity, IBS, constipation and food sensitivities." }],
-  ["🧠", { hi: "तनाव और नींद", en: "Stress & sleep" }, { hi: "चिंता, उदासी, थकान और बेचैन रातों में संवेदनशील सहयोग।", en: "Anxiety, low mood, burnout and restless nights, with compassionate support." }],
-];
-function Care() {
+function Conditions() {
   const t = useT();
   return (
     <section className="treat" id="care">
+      <div className="bgimg" style={{ backgroundImage: "url(/images/tea.jpg)", opacity: 0.07 }} />
       <div className="wrap">
-        <div className="head"><Reveal><span className="eyebrow">{t({ hi: "उपचार क्षेत्र", en: "Areas of care" })}</span><h2>{t({ hi: "पूरे ", en: "Support for the whole " })}<em>{t({ hi: "परिवार", en: "family" })}</em>{t({ hi: " के लिए सहारा", en: "" })}</h2></Reveal>
-          <Reveal delay={0.1}><p className="lead">{t({ hi: "होम्योपैथी आपकी समग्र चिकित्सा का पूरक हो सकती है। चल रहे इलाज के बारे में डॉक्टर को ज़रूर बताएँ।", en: "Homeopathy can complement your overall healthcare. Always tell us about any ongoing treatment." })}</p></Reveal></div>
-        <div className="grid">
-          {CARE.map(([e, h, p], i) => (
-            <Reveal key={h.en} delay={(i % 3) * 0.1}><div className="card"><span className="em">{e}</span><h3>{t(h)}</h3><p>{t(p)}</p></div></Reveal>
+        <Head eyebrow={t({ hi: "सीमांचल की आम तकलीफ़ें", en: "Common health problems in Seemanchal" })} lead={t({ hi: "यहाँ की नमी, बरसात-बाढ़, खेती-मज़दूरी और पानी की स्थिति से जुड़ी ये तकलीफ़ें हमारे क्लिनिक में सबसे ज़्यादा देखी जाती हैं। होम्योपैथी इनमें सहायक देखभाल दे सकती है।", en: "These problems, linked to local humidity, monsoon floods, farm labour and water quality, are what we see most. Homeopathy can offer supportive care for them." })}>
+          {t({ hi: "ये तकलीफ़ें आपके घर में भी हैं? ", en: "Do these problems sound " })}<em>{t({ hi: "हम मदद कर सकते हैं", en: "familiar? We can help" })}</em>
+        </Head>
+        <div className="cgrid">
+          {CONDITIONS.map((c, i) => (
+            <Reveal key={c.title.en} delay={(i % 3) * 0.1}>
+              <article className="ccard">
+                <div className="cimg"><img src={c.img} alt={t(c.title)} loading="lazy" /></div>
+                <div className="cbody">
+                  <h3>{t(c.title)}</h3>
+                  <p className="why">{t(c.why)}</p>
+                  <ul>{c.signs.map((s) => <li key={s.en}>{t(s)}</li>)}</ul>
+                  <a href="#book" className="more">{t({ hi: "इसके लिए परामर्श लें →", en: "Consult for this →" })}</a>
+                </div>
+              </article>
+            </Reveal>
           ))}
         </div>
+        <p className="note" style={{ marginTop: 28, textAlign: "center" }}>{t({ hi: "हर व्यक्ति अलग होता है और परिणाम अलग-अलग हो सकते हैं। गंभीर या आपातकालीन स्थिति में तुरंत नज़दीकी अस्पताल जाएँ।", en: "Every person is different and results vary. In a serious or emergency situation, go to the nearest hospital immediately." })}</p>
       </div>
     </section>
   );
 }
 
-function Areas() {
+function Benefits() {
   const t = useT();
-  const d: [Bi, string][] = [[{ hi: "पूर्णिया", en: "Purnia" }, "Purnia"], [{ hi: "अररिया", en: "Araria" }, "Araria"], [{ hi: "किशनगंज", en: "Kishanganj" }, "Kishanganj"], [{ hi: "कटिहार", en: "Katihar" }, "Katihar"]];
   return (
-    <section className="dist" id="areas">
+    <section className="benefits" id="benefits">
+      <div className="bgimg" style={{ backgroundImage: "url(/images/herbs1.jpg)", opacity: 0.13 }} />
       <div className="wrap">
-        <Reveal><span className="eyebrow">{t({ hi: "हमारा सेवा क्षेत्र", en: "Where we serve" })}</span>
-          <h2>{t({ hi: "पूरे ", en: "All of " })}<em>{t({ hi: "सीमांचल", en: "Seemanchal" })}</em>{t({ hi: " के लिए", en: ", close to home" })}</h2>
-          <p className="lead">{t({ hi: "पूर्णिया, अररिया, किशनगंज और कटिहार के मरीज़ क्लिनिक आ सकते हैं या वीडियो/WhatsApp के ज़रिये फॉलो-अप ले सकते हैं।", en: "Patients from Purnia, Araria, Kishanganj and Katihar can visit the clinic or follow up by video and WhatsApp." })}</p></Reveal>
-        <div className="dgrid">
-          {d.map(([b, en], i) => <Reveal key={en} delay={i * 0.1}><div className="dcard"><span className="pin">📍</span><h3>{b.hi}</h3><small>{en}</small></div></Reveal>)}
+        <Head eyebrow={t({ hi: "होम्योपैथी के फ़ायदे", en: "Why homeopathy" })} lead={t({ hi: "आपके परिवार के लिए होम्योपैथी क्यों एक अच्छा विकल्प हो सकती है:", en: "Why homeopathy can be a good option for your family:" })}>
+          {t({ hi: "सौम्य इलाज, ", en: "Gentle care, " })}<em>{t({ hi: "पूरे परिवार", en: "for the whole family" })}</em>{t({ hi: " के लिए", en: "" })}
+        </Head>
+        <div className="bgrid">
+          {BENEFITS.map((b, i) => (
+            <Reveal key={b.t.en} delay={(i % 3) * 0.1}>
+              <div className="bcard"><span className="bn">0{i + 1}</span><h3>{t(b.t)}</h3><p>{t(b.d)}</p></div>
+            </Reveal>
+          ))}
         </div>
       </div>
     </section>
@@ -245,48 +177,93 @@ function Areas() {
 
 function Process() {
   const t = useT();
-  const s: [Bi, Bi][] = [[{ hi: "बुक करें", en: "Book" }, { hi: "WhatsApp, कॉल या फ़ॉर्म से समय चुनें — क्लिनिक या वीडियो।", en: "Choose a time online or on WhatsApp — in-clinic or video." }], [{ hi: "परामर्श", en: "Consult" }, { hi: "आराम से लंबी बातचीत — सिर्फ़ लक्षण नहीं, आपके बारे में।", en: "A relaxed, in-depth conversation about you, not just symptoms." }], [{ hi: "दवा", en: "Prescribe" }, { hi: "आपकी प्रकृति के अनुसार चुनी गई व्यक्तिगत दवा और योजना।", en: "A remedy and plan individualised to your constitution." }], [{ hi: "फॉलो-अप", en: "Follow up" }, { hi: "नियमित समीक्षा से प्रगति देखी जाती है और ज़रूरत अनुसार बदलाव होते हैं।", en: "Regular reviews to track progress and adjust with care." }]];
   return (
     <section className="process" id="process">
       <div className="wrap">
-        <Reveal><span className="eyebrow">{t({ hi: "कैसे काम करता है", en: "How it works" })}</span><h2>{t({ hi: "बेहतर महसूस करने के ", en: "Four simple steps to " })}<em>{t({ hi: "चार आसान कदम", en: "feeling better" })}</em></h2><p className="lead">{t({ hi: "कोई जल्दबाज़ी नहीं, कोई कठिन शब्द नहीं — हर कदम पर साफ़ मार्गदर्शन।", en: "No rush, no jargon — just clear guidance at every stage." })}</p></Reveal>
+        <Head eyebrow={t({ hi: "कैसे काम करता है", en: "How it works" })} lead={t({ hi: "कोई जल्दबाज़ी नहीं, कोई कठिन शब्द नहीं।", en: "No rush, no jargon." })}>
+          {t({ hi: "बेहतर महसूस करने के ", en: "Four simple steps to " })}<em>{t({ hi: "चार आसान कदम", en: "feeling better" })}</em>
+        </Head>
         <div className="steps">
-          {s.map(([h, p], i) => <Reveal key={h.en} delay={i * 0.12}><div className="step"><span className="n">0{i + 1}</span><h3>{t(h)}</h3><p>{t(p)}</p></div></Reveal>)}
+          {STEPS.map((s, i) => <Reveal key={s.t.en} delay={i * 0.12}><div className="step"><span className="n">0{i + 1}</span><h3>{t(s.t)}</h3><p>{t(s.d)}</p></div></Reveal>)}
         </div>
       </div>
     </section>
   );
 }
 
-function Doctors() {
+function Doctor() {
   const t = useT();
-  const d: [Bi, Bi, string][] = [[{ hi: "डॉ. नाम उपनाम", en: "Dr. Name Surname" }, { hi: "BHMS · मुख्य होम्योपैथ", en: "BHMS · Lead Homeopath" }, "#dde8d1"], [{ hi: "डॉ. नाम उपनाम", en: "Dr. Name Surname" }, { hi: "BHMS · बाल रोग देखभाल", en: "BHMS · Paediatric care" }, "#f3dcc7"], [{ hi: "डॉ. नाम उपनाम", en: "Dr. Name Surname" }, { hi: "BHMS · महिला स्वास्थ्य", en: "BHMS · Women's health" }, "#e9dfca"]];
+  const vals: Bi[] = [{ hi: "पहले पूरी बात सुनना, फिर दवा", en: "Listen fully, then prescribe" }, { hi: "साफ़ भाषा में समझाना — हिंदी, उर्दू या सुरजापुरी में", en: "Explain clearly — in Hindi, Urdu or Surjapuri" }, { hi: "ज़रूरत पड़े तो आधुनिक इलाज की सलाह देना", en: "Refer for conventional care whenever needed" }];
   return (
-    <section id="doctors">
+    <section id="doctor" className="doctor">
       <div className="wrap">
-        <div className="head"><Reveal><span className="eyebrow">{t({ hi: "हमारे चिकित्सक", en: "Our physicians" })}</span><h2>{t({ hi: "ऐसे ", en: "Care from " })}<em>{t({ hi: "लोग", en: "people" })}</em>{t({ hi: " जो आपकी सुनते हैं", en: " who listen" })}</h2></Reveal></div>
-        <div className="docs">
-          {d.map(([n, r, c], i) => (
-            <Reveal key={i} delay={i * 0.12}><div className="doc">
-              <div className="avatar" style={{ background: c }}><svg viewBox="0 0 100 100"><circle cx="50" cy="36" r="18" fill="#2f4a3a" opacity=".85" /><path d="M14 100c0-26 16-40 36-40s36 14 36 40Z" fill="#2f4a3a" opacity=".85" /></svg></div>
-              <h3>{t(n)}</h3><p>{t(r)}</p></div></Reveal>
-          ))}
+        <Reveal>
+          <div className="dphoto"><img src="/images/consult2.jpg" alt={t({ hi: "डॉक्टर मरीज़ की रिपोर्ट देखते हुए", en: "Doctor reviewing a patient's report" })} loading="lazy" /><span className="tag">{t({ hi: "नमूना फ़ोटो — असली फ़ोटो से बदलें", en: "Sample photo — replace with real" })}</span></div>
+        </Reveal>
+        <div>
+          <Head eyebrow={t({ hi: "हमारे चिकित्सक", en: "Meet your doctor" })}>
+            {t({ hi: "अपने ही इलाक़े का ", en: "A doctor from " })}<em>{t({ hi: "अपना डॉक्टर", en: "your own region" })}</em>
+          </Head>
+          <Reveal delay={0.1}>
+            <h3 className="dname">{t({ hi: "डॉ. [नाम यहाँ जोड़ें], BHMS", en: "Dr. [Add name], BHMS" })}</h3>
+            <p className="dsub">{t({ hi: "होम्योपैथिक चिकित्सक · पंजीकरण संख्या: [जोड़ें]", en: "Homeopathic physician · Reg. No.: [add]" })}</p>
+            <blockquote>
+              {t({ hi: "“मेरा बचपन बहादुरगंज के पास ही बीता। मैंने देखा कि इलाज के लिए हमारे यहाँ के परिवारों को कितनी दूर जाना पड़ता है, और डॉक्टर के पास सुनने का समय कितना कम होता है। यही बात मुझे होम्योपैथी तक लाई, जहाँ मरीज़ की पूरी कहानी सुनना ही इलाज का पहला कदम है। BHMS के बाद मैंने तय किया कि अपने ही इलाक़े लौटकर HMS शुरू करूँगा, ताकि सीमांचल के परिवारों को घर के पास भरोसेमंद और बिना जल्दबाज़ी वाली होम्योपैथिक देखभाल मिल सके।”", en: "“I grew up near Bahadurganj. I saw how far families here travel for treatment, and how little time doctors have to listen. That led me to homeopathy, where hearing the patient's whole story is the first step of treatment. After BHMS I decided to return home and start HMS, so Seemanchal families get trustworthy, unhurried homeopathic care close to home.”" })}
+            </blockquote>
+            <p className="note">{t({ hi: "यह एक नमूना कहानी है — कृपया डॉक्टर की असली कहानी और योग्यता से बदलें।", en: "This is a sample story — please replace it with the doctor's real story and credentials." })}</p>
+            <ul className="vals">{vals.map((v) => <li key={v.en}>✓ {t(v)}</li>)}</ul>
+          </Reveal>
         </div>
       </div>
     </section>
   );
 }
 
-function Testimonials() {
+function Stories() {
   const t = useT();
-  const q: [Bi, Bi][] = [[{ hi: "पहली बार लगा कि डॉक्टर ने सच में मेरी बात सुनी। परामर्श बिल्कुल अलग अनुभव था।", en: "I finally felt heard. The consultation was unlike anything I'd experienced before." }, { hi: "मरीज़ — असली नाम जोड़ें", en: "Patient — add real name" }], [{ hi: "बेटी की बार-बार होने वाली एलर्जी में सौम्य देखभाल मिली। फॉलो-अप भी बहुत अच्छा है।", en: "Gentle care for my daughter's recurring allergies. We love the follow-up support." }, { hi: "अभिभावक — असली नाम जोड़ें", en: "Parent — add real name" }], [{ hi: "साफ़, धैर्य से समझाने वाले और अपनापन। पूरे परिवार को HMS की सलाह दूँगा।", en: "Clear, patient and caring. I'd recommend HMS to my whole family." }, { hi: "मरीज़ — असली नाम जोड़ें", en: "Patient — add real name" }]];
   return (
     <section className="test">
       <div className="wrap">
-        <Reveal><span className="eyebrow">{t({ hi: "मरीज़ों के शब्द", en: "Kind words" })}</span><h2>{t({ hi: "परिवारों का ", en: "Families who " })}<em>{t({ hi: "भरोसा", en: "trust" })}</em>{t({ hi: "", en: " us" })}</h2></Reveal>
-        <div className="tgrid" style={{ marginTop: 44 }}>
-          {q.map(([x, a], i) => <Reveal key={i} delay={i * 0.12}><div className="quote"><div className="stars">★★★★★</div><p>“{t(x)}”</p><small>{t(a)}</small></div></Reveal>)}
+        <Head eyebrow={t({ hi: "मरीज़ों के अनुभव", en: "Patient experiences" })}>{t({ hi: "परिवारों का ", en: "Families who " })}<em>{t({ hi: "भरोसा", en: "trust" })}</em>{t({ hi: "", en: " us" })}</Head>
+        <div className="tgrid">
+          {STORIES.map((s, i) => (
+            <Reveal key={i} delay={i * 0.12}>
+              <div className="quote">
+                <p>“{t(s.q)}”</p>
+                <div className="qwho"><img src={s.img} alt="" loading="lazy" /><small>{t(s.who)}</small></div>
+              </div>
+            </Reveal>
+          ))}
         </div>
+        <p className="note" style={{ marginTop: 24, textAlign: "center" }}>{t({ hi: "ये नमूना अनुभव हैं। असली मरीज़ों की अनुमति से उनके शब्द और फ़ोटो जोड़ें।", en: "These are sample stories. Replace with real patients' words and photos, with their permission." })}</p>
+      </div>
+    </section>
+  );
+}
+
+function Visit() {
+  const t = useT();
+  return (
+    <section id="visit" className="visit">
+      <div className="bgimg" style={{ backgroundImage: "url(/images/hills.jpg)", opacity: 0.1 }} />
+      <div className="wrap">
+        <div>
+          <Head eyebrow={t({ hi: "हमारा क्लिनिक", en: "Visit the clinic" })} lead={t({ hi: "बहादुरगंज (किशनगंज) में स्थित। आसपास के सभी इलाक़ों से आसानी से पहुँचें।", en: "Located in Bahadurganj (Kishanganj). Easy to reach from all nearby areas." })}>
+            {t({ hi: "आइए, ", en: "Come see us in " })}<em>{t({ hi: "बहादुरगंज", en: "Bahadurganj" })}</em>{t({ hi: " में मिलें", en: "" })}
+          </Head>
+          <Reveal delay={0.1}>
+            <ul className="vinfo">
+              <li><b>📍 {t({ hi: "पता", en: "Address" })}</b>{t(CLINIC.town)}<br /><small>{t(CLINIC.landmark)}</small></li>
+              <li><b>🕘 {t({ hi: "समय", en: "Hours" })}</b>{t(CLINIC.hours)}</li>
+              <li><b>📞 {t({ hi: "फ़ोन / WhatsApp", en: "Phone / WhatsApp" })}</b><a href={tel}>{CLINIC.phone}</a></li>
+            </ul>
+            <div className="cta-row"><a className="btn btn-primary" href={CLINIC.mapsLink} target="_blank" rel="noreferrer">{t({ hi: "रास्ता देखें →", en: "Get directions →" })}</a><a className="btn btn-ghost" href={wa("नमस्ते HMS होम्योपैथी सेंटर")} target="_blank" rel="noreferrer">WhatsApp</a></div>
+            <p className="near">{t({ hi: "इन इलाक़ों से आते हैं मरीज़:", en: "Patients come from:" })} {NEARBY.join(" · ")}</p>
+          </Reveal>
+        </div>
+        <Reveal delay={0.15}>
+          <div className="map"><iframe title="HMS Homeopathy Center, Bahadurganj, Kishanganj" src={CLINIC.mapsEmbed} loading="lazy" referrerPolicy="no-referrer-when-downgrade" /></div>
+        </Reveal>
       </div>
     </section>
   );
@@ -295,22 +272,15 @@ function Testimonials() {
 function FAQ() {
   const t = useT();
   const [o, setO] = useState<number | null>(0);
-  const f: [Bi, Bi][] = [
-    [{ hi: "होम्योपैथी क्या है?", en: "What is homeopathy?" }, { hi: "होम्योपैथी एक चिकित्सा पद्धति है जिसमें अत्यंत सूक्ष्म मात्रा की दवाएँ, पूरे व्यक्ति के लक्षणों के पैटर्न के अनुसार चुनी जाती हैं।", en: "Homeopathy is a system of medicine that uses highly diluted substances, selected to match the whole person's pattern of symptoms." }],
-    [{ hi: "क्या यह बच्चों और गर्भावस्था में सुरक्षित है?", en: "Is it suitable for children and during pregnancy?" }, { hi: "होम्योपैथिक दवाएँ आमतौर पर सभी उम्र में दी जाती हैं। बच्चों, गर्भावस्था और स्तनपान के लिए डॉक्टर आपको व्यक्तिगत सलाह देंगे।", en: "Homeopathic remedies are commonly used for all ages. Your physician will personalise advice for children, pregnancy and breastfeeding." }],
-    [{ hi: "पहला परामर्श कितना लंबा होता है?", en: "How long is the first consultation?" }, { hi: "आमतौर पर 45–60 मिनट, ताकि आपकी पूरी सेहत-कहानी और जीवनशैली समझी जा सके।", en: "Typically 45–60 minutes so we can understand your full health history and lifestyle." }],
-    [{ hi: "क्या मैं अपनी मौजूदा दवाएँ जारी रख सकता/सकती हूँ?", en: "Can I continue my current medicines?" }, { hi: "कृपया डॉक्टर की सलाह के बिना कोई दवा बंद न करें। होम्योपैथी अक्सर सामान्य इलाज के साथ ली जाती है।", en: "Please do not stop prescribed medication without your doctor's advice. Homeopathy is often used alongside conventional care." }],
-    [{ hi: "क्या ऑनलाइन परामर्श उपलब्ध है?", en: "Do you offer online consultations?" }, { hi: "हाँ — जो मरीज़ क्लिनिक नहीं आ सकते, उनके लिए वीडियो/WhatsApp पर फॉलो-अप उपलब्ध है।", en: "Yes — video consultations are available for follow-ups and for patients who cannot visit in person." }],
-  ];
   return (
     <section className="faq" id="faq">
       <div className="wrap">
-        <Reveal><span className="eyebrow">{t({ hi: "आपके सवाल", en: "Questions" })}</span><h2>{t({ hi: "जानना ", en: "Good to " })}<em>{t({ hi: "ज़रूरी", en: "know" })}</em></h2><p className="lead">{t({ hi: "जवाब नहीं मिला? WhatsApp पर पूछिए, हम खुशी से मदद करेंगे।", en: "Can't find your answer? Message us on WhatsApp and we'll be glad to help." })}</p></Reveal>
+        <Head eyebrow={t({ hi: "आपके सवाल", en: "Questions" })} lead={t({ hi: "जवाब नहीं मिला? WhatsApp पर पूछिए।", en: "Can't find your answer? Ask us on WhatsApp." })}>{t({ hi: "जानना ", en: "Good to " })}<em>{t({ hi: "ज़रूरी", en: "know" })}</em></Head>
         <div>
-          {f.map(([q, a], i) => (
+          {FAQS.map((f, i) => (
             <div key={i} className={`q ${o === i ? "open" : ""}`}>
-              <button onClick={() => setO(o === i ? null : i)} aria-expanded={o === i}>{t(q)}<span className="pl">+</span></button>
-              <AnimatePresence initial={false}>{o === i && <motion.div className="a" initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.4, ease }}><p>{t(a)}</p></motion.div>}</AnimatePresence>
+              <button onClick={() => setO(o === i ? null : i)} aria-expanded={o === i}>{t(f.q)}<span className="pl">+</span></button>
+              <AnimatePresence initial={false}>{o === i && <motion.div className="a" initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.4, ease }}><p>{t(f.a)}</p></motion.div>}</AnimatePresence>
             </div>
           ))}
         </div>
@@ -325,21 +295,25 @@ function Book() {
   function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const d = Object.fromEntries(new FormData(e.currentTarget)) as Record<string, string>;
-    const msg = `नमस्ते HMS होम्योपैथी सेंटर, मैं अपॉइंटमेंट बुक करना चाहता/चाहती हूँ।\nनाम: ${d.name}\nफ़ोन: ${d.phone}\nशहर/जिला: ${d.city}\nतारीख: ${d.date}\nप्रकार: ${d.type}\nसमस्या: ${d.concern || "-"}`;
-    window.open(`https://wa.me/${CLINIC.whatsapp}?text=${encodeURIComponent(msg)}`, "_blank");
+    const msg = `नमस्ते HMS होम्योपैथी सेंटर, मैं अपॉइंटमेंट बुक करना चाहता/चाहती हूँ।\nनाम: ${d.name}\nफ़ोन: ${d.phone}\nइलाक़ा: ${d.city}\nतारीख: ${d.date}\nप्रकार: ${d.type}\nसमस्या: ${d.concern || "-"}`;
+    window.open(wa(msg), "_blank");
     setSent(true);
   }
   return (
     <section className="book" id="book">
+      <div className="bgimg" style={{ backgroundImage: "url(/images/herbs2.jpg)", opacity: 0.1 }} />
       <div className="wrap">
-        <Reveal><span className="eyebrow" style={{ color: "#cfe0c2" }}>{t({ hi: "अपॉइंटमेंट बुक करें", en: "Book an appointment" })}</span><h2>{t({ hi: "अपनी ", en: "Begin your " })}<em>{t({ hi: "सेहत", en: "healing" })}</em>{t({ hi: " की यात्रा शुरू करें", en: " journey" })}</h2>
-          <p className="lead">{t({ hi: "कुछ जानकारी भेजें, हम WhatsApp पर आपका समय पक्का करेंगे।", en: "Share a few details and we'll confirm your slot on WhatsApp." })}</p>
-          <div className="info"><div>📍 {CLINIC.address}</div><div>📞 <a href={`tel:${CLINIC.phone.replace(/\s/g, "")}`}>{CLINIC.phone}</a></div><div>✉️ {CLINIC.email}</div><div>🕘 {t(CLINIC.hours)}</div></div></Reveal>
+        <Reveal>
+          <span className="eyebrow" style={{ color: "#cfe0c2" }}>{t({ hi: "आज ही शुरुआत करें", en: "Start today" })}</span>
+          <h2>{t({ hi: "अपनी ", en: "Begin your " })}<em>{t({ hi: "सेहत", en: "healing" })}</em>{t({ hi: " की यात्रा शुरू करें", en: " journey" })}</h2>
+          <p className="lead">{t({ hi: "कुछ जानकारी भेजें, हम WhatsApp पर आपका समय पक्का करेंगे। या सीधे कॉल करें।", en: "Send a few details and we'll confirm your slot on WhatsApp. Or simply call us." })}</p>
+          <div className="info"><div>📍 {t(CLINIC.town)}</div><div>📞 <a href={tel}>{CLINIC.phone}</a></div><div>🕘 {t(CLINIC.hours)}</div></div>
+        </Reveal>
         <Reveal delay={0.15}>
           <form onSubmit={submit}>
             <div className="two"><label>{t({ hi: "पूरा नाम", en: "Full name" })}<input name="name" required placeholder={t({ hi: "आपका नाम", en: "Your name" })} /></label><label>{t({ hi: "मोबाइल नंबर", en: "Phone" })}<input name="phone" required type="tel" inputMode="tel" placeholder={t({ hi: "मोबाइल नंबर", en: "Mobile number" })} /></label></div>
-            <div className="two"><label>{t({ hi: "शहर / जिला", en: "Town / district" })}<select name="city"><option>पूर्णिया</option><option>अररिया</option><option>किशनगंज</option><option>कटिहार</option><option>{t({ hi: "अन्य", en: "Other" })}</option></select></label><label>{t({ hi: "पसंदीदा तारीख", en: "Preferred date" })}<input name="date" type="date" required /></label></div>
-            <label>{t({ hi: "परामर्श का प्रकार", en: "Visit type" })}<select name="type"><option>{t({ hi: "क्लिनिक में", en: "In-clinic" })}</option><option>{t({ hi: "वीडियो परामर्श", en: "Video consultation" })}</option></select></label>
+            <div className="two"><label>{t({ hi: "इलाक़ा", en: "Area" })}<select name="city">{NEARBY.map((n) => <option key={n}>{n}</option>)}<option>{t({ hi: "अन्य", en: "Other" })}</option></select></label><label>{t({ hi: "पसंदीदा तारीख", en: "Preferred date" })}<input name="date" type="date" required /></label></div>
+            <label>{t({ hi: "परामर्श का प्रकार", en: "Visit type" })}<select name="type"><option>{t({ hi: "क्लिनिक में (बहादुरगंज)", en: "In-clinic (Bahadurganj)" })}</option><option>{t({ hi: "वीडियो / WhatsApp", en: "Video / WhatsApp" })}</option></select></label>
             <label>{t({ hi: "स्वास्थ्य समस्या (वैकल्पिक)", en: "Health concern (optional)" })}<textarea name="concern" rows={3} placeholder={t({ hi: "संक्षेप में बताएँ कि क्या तकलीफ़ है", en: "Briefly describe what brings you in" })} /></label>
             <button className="btn btn-primary" type="submit" style={{ justifyContent: "center" }}>{t({ hi: "WhatsApp पर अनुरोध भेजें →", en: "Request on WhatsApp →" })}</button>
             {sent && <div className="ok">{t({ hi: "धन्यवाद! WhatsApp में संदेश भेजकर अनुरोध पूरा करें — हम जल्द पुष्टि करेंगे।", en: "Thank you! Complete your request in WhatsApp — we'll confirm shortly." })}</div>}
@@ -351,22 +325,32 @@ function Book() {
   );
 }
 
+const SCHEMA = {
+  "@context": "https://schema.org", "@type": "MedicalClinic", name: "HMS Homeopathy Center",
+  description: "Homeopathic clinic in Bahadurganj, Kishanganj, Bihar serving Seemanchal.",
+  medicalSpecialty: "Homeopathy", address: { "@type": "PostalAddress", addressLocality: "Bahadurganj", addressRegion: "Bihar", addressCountry: "IN" },
+  areaServed: ["Kishanganj", "Araria", "Purnia", "Katihar"],
+};
+
 export default function Page() {
   const [lang, setLangState] = useState<Lang>("hi");
-  useEffect(() => {
-    try { const l = localStorage.getItem("hms-lang"); if (l === "en" || l === "hi") setLangState(l); } catch {}
-  }, []);
+  useEffect(() => { try { const l = localStorage.getItem("hms-lang"); if (l === "en" || l === "hi") setLangState(l); } catch {} }, []);
   useEffect(() => { document.documentElement.lang = lang; }, [lang]);
   const setLang = (l: Lang) => { setLangState(l); try { localStorage.setItem("hms-lang", l); } catch {} };
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 120, damping: 30 });
+  const hi = lang === "hi";
   return (
     <LangCtx.Provider value={{ lang, setLang }}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(SCHEMA) }} />
       <motion.div className="progress" style={{ scaleX }} />
-      <Nav /><Hero /><Marquee /><About /><Care /><Areas /><Process /><Doctors /><Testimonials /><FAQ /><Book />
-      <footer><div className="wrap"><span>© {new Date().getFullYear()} HMS Homeopathy Center · {lang === "hi" ? "सीमांचल, बिहार" : "Seemanchal, Bihar"}</span><span>{lang === "hi" ? "सौम्य देखभाल · प्राकृतिक उपचार" : "Gentle care · Natural healing"}</span></div></footer>
-      <a className="btn btn-call callfab" href={`tel:${CLINIC.phone.replace(/\s/g, "")}`}>📞 {lang === "hi" ? "कॉल" : "Call"}</a>
-      <a className="wa" href={`https://wa.me/${CLINIC.whatsapp}`} target="_blank" rel="noreferrer" aria-label="WhatsApp">💬</a>
+      <Nav /><Hero /><Marquee /><Conditions /><Benefits /><Process /><Doctor /><Stories /><Visit /><FAQ /><Book />
+      <footer><div className="wrap"><span>© {new Date().getFullYear()} HMS Homeopathy Center · {hi ? "बहादुरगंज, किशनगंज, बिहार" : "Bahadurganj, Kishanganj, Bihar"}</span><span>{hi ? "तस्वीरें: Pexels" : "Photos: Pexels"}</span></div></footer>
+      <div className="mbar">
+        <a href={tel}>📞 {hi ? "कॉल" : "Call"}</a>
+        <a href={wa("नमस्ते HMS होम्योपैथी सेंटर")} target="_blank" rel="noreferrer">💬 WhatsApp</a>
+        <a href="#book" className="b">{hi ? "बुक करें" : "Book"}</a>
+      </div>
     </LangCtx.Provider>
   );
 }
