@@ -84,7 +84,7 @@ function Hero() {
   const chips: Bi[] = [{ hi: "बच्चे से बुज़ुर्ग तक", en: "Children to elders" }, { hi: "45+ मिनट का परामर्श", en: "45+ min consultation" }, { hi: "WhatsApp पर फॉलो-अप", en: "WhatsApp follow-ups" }, { hi: "सीमांचल के 4 जिलों से मरीज़", en: "Patients from 4 Seemanchal districts" }];
   return (
     <header className="hero" id="top">
-      <div className="bgimg" style={{ backgroundImage: "url(/images/hero-field.jpg)", opacity: 0.2 }} />
+      <div className="bgimg" style={{ backgroundImage: "url(/images/herbs3.jpg)", opacity: 0.2 }} />
       <div className="wrap">
         <div>
           <motion.span className="eyebrow" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>{t({ hi: "HMS होम्योपैथी सेंटर · किशनगंज, बिहार", en: "HMS Homeopathy Center · Kishanganj, Bihar" })}</motion.span>
@@ -128,7 +128,7 @@ function Conditions() {
   const t = useT();
   return (
     <section className="treat" id="care">
-      <div className="bgimg" style={{ backgroundImage: "url(/images/tea.jpg)", opacity: 0.07 }} />
+      <div className="bgimg" style={{ backgroundImage: "url(/images/herbs2.jpg)", opacity: 0.07 }} />
       <div className="wrap">
         <Head eyebrow={t({ hi: "सीमांचल की आम तकलीफ़ें", en: "Common health problems in Seemanchal" })} lead={t({ hi: "यहाँ की नमी, बरसात-बाढ़, खेती-मज़दूरी और पानी की स्थिति से जुड़ी ये तकलीफ़ें हमारे क्लिनिक में सबसे ज़्यादा देखी जाती हैं। होम्योपैथी इनमें सहायक देखभाल दे सकती है।", en: "These problems, linked to local humidity, monsoon floods, farm labour and water quality, are what we see most. Homeopathy can offer supportive care for them." })}>
           {t({ hi: "ये तकलीफ़ें आपके घर में भी हैं? ", en: "Do these problems sound " })}<em>{t({ hi: "हम मदद कर सकते हैं", en: "familiar? We can help" })}</em>
@@ -245,7 +245,6 @@ function Visit() {
   const t = useT();
   return (
     <section id="visit" className="visit">
-      <div className="bgimg" style={{ backgroundImage: "url(/images/hills.jpg)", opacity: 0.1 }} />
       <div className="wrap">
         <div>
           <Head eyebrow={t({ hi: "हमारा क्लिनिक", en: "Visit the clinic" })} lead={t({ hi: "बहादुरगंज (किशनगंज) में स्थित। आसपास के सभी इलाक़ों से आसानी से पहुँचें।", en: "Located in Bahadurganj (Kishanganj). Easy to reach from all nearby areas." })}>
@@ -304,7 +303,7 @@ function Book() {
   }
   return (
     <section className="book" id="book">
-      <div className="bgimg" style={{ backgroundImage: "url(/images/herbs2.jpg)", opacity: 0.1 }} />
+      <div className="bgimg" style={{ backgroundImage: "url(/images/pills.jpg)", opacity: 0.1 }} />
       <div className="wrap">
         <Reveal>
           <span className="eyebrow" style={{ color: "#cfe0c2" }}>{t({ hi: "आज ही शुरुआत करें", en: "Start today" })}</span>
