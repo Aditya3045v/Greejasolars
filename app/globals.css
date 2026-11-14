@@ -238,3 +238,5 @@ blockquote{font-family:var(--serif);font-size:1.15rem;line-height:1.7;color:var(
   footer{padding-bottom:90px}
 }
 @media(max-width:620px){.cgrid,.bgrid{grid-template-columns:1fr}.topbar .sep,.topbar span:last-child{display:none}}
+
+:root[lang="en"] .hero h1{font-size:clamp(2.5rem,5vw,4.3rem);line-height:1.08}

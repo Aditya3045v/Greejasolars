@@ -81,4 +81,8 @@ export const FAQS: { q: Bi; a: Bi }[] = [
   { q: { hi: "क्या WhatsApp या वीडियो पर परामर्श हो सकता है?", en: "Can I consult on WhatsApp or video?" }, a: { hi: "हाँ। जो मरीज़ अररिया, पूर्णिया या कटिहार जैसे दूर के इलाक़ों में हैं, वे फॉलो-अप वीडियो/WhatsApp पर ले सकते हैं।", en: "Yes. Patients in farther areas like Araria, Purnia or Katihar can take follow-ups on video or WhatsApp." } },
 ];
 
-export const NEARBY = ["बहादुरगंज", "ठाकुरगंज", "कोचाधामन", "पोठिया", "दिघलबैंक", "टेढ़ागाछ", "किशनगंज", "अररिया", "पूर्णिया", "कटिहार"];
+export const NEARBY: Bi[] = [
+  { hi: "बहादुरगंज", en: "Bahadurganj" }, { hi: "ठाकुरगंज", en: "Thakurganj" }, { hi: "कोचाधामन", en: "Kochadhaman" }, { hi: "पोठिया", en: "Pothia" },
+  { hi: "दिघलबैंक", en: "Dighalbank" }, { hi: "टेढ़ागाछ", en: "Terhagachh" }, { hi: "किशनगंज", en: "Kishanganj" }, { hi: "अररिया", en: "Araria" },
+  { hi: "पूर्णिया", en: "Purnia" }, { hi: "कटिहार", en: "Katihar" },
+];
