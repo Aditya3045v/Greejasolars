@@ -4,7 +4,7 @@ import { motion, useScroll, useSpring, AnimatePresence } from "framer-motion";
 import { CLINIC, CONDITIONS, BENEFITS, STEPS, STORIES, FAQS, NEARBY, type Bi } from "./content";
 
 type Lang = "hi" | "en";
-const LangCtx = createContext<{ lang: Lang; setLang: (l: Lang) => void }>({ lang: "hi", setLang: () => {} });
+const LangCtx = createContext<{ lang: Lang; setLang: (l: Lang) => void }>({ lang: "en", setLang: () => {} });
 const useT = () => { const { lang } = useContext(LangCtx); return (b: Bi) => b[lang]; };
 const ease = [0.22, 1, 0.36, 1] as const;
 const tel = `tel:${CLINIC.phone.replace(/\s/g, "")}`;
@@ -56,8 +56,8 @@ function Nav() {
           </a>
           <div className="links">
             {items.map(([b, h]) => <a key={h} href={h} className="l">{t(b)}</a>)}
-            <LangSwitch />
             <a href="#book" className="btn btn-primary">{t({ hi: "अपॉइंटमेंट बुक करें", en: "Book appointment" })}</a>
+            <LangSwitch />
           </div>
           <button className="burger" aria-label="Menu" onClick={() => setOpen(true)}>☰</button>
         </div>
@@ -120,7 +120,7 @@ function Hero() {
 
 function Marquee() {
   const t = useT();
-  const row = [...NEARBY, ...NEARBY];
+  const row = [...NEARBY, ...NEARBY].map((x) => t(x));
   return <div className="marquee" aria-label={t({ hi: "सेवा क्षेत्र", en: "Areas we serve" })}><div className="track">{row.map((x, i) => <span key={i}>{x}</span>)}</div></div>;
 }
 
@@ -257,8 +257,8 @@ function Visit() {
               <li><b>🕘 {t({ hi: "समय", en: "Hours" })}</b>{t(CLINIC.hours)}</li>
               <li><b>📞 {t({ hi: "फ़ोन / WhatsApp", en: "Phone / WhatsApp" })}</b><a href={tel}>{CLINIC.phone}</a></li>
             </ul>
-            <div className="cta-row"><a className="btn btn-primary" href={CLINIC.mapsLink} target="_blank" rel="noreferrer">{t({ hi: "रास्ता देखें →", en: "Get directions →" })}</a><a className="btn btn-ghost" href={wa("नमस्ते HMS होम्योपैथी सेंटर")} target="_blank" rel="noreferrer">WhatsApp</a></div>
-            <p className="near">{t({ hi: "इन इलाक़ों से आते हैं मरीज़:", en: "Patients come from:" })} {NEARBY.join(" · ")}</p>
+            <div className="cta-row"><a className="btn btn-primary" href={CLINIC.mapsLink} target="_blank" rel="noreferrer">{t({ hi: "रास्ता देखें →", en: "Get directions →" })}</a><a className="btn btn-ghost" href={wa("Hello HMS Homeopathy Center")} target="_blank" rel="noreferrer">WhatsApp</a></div>
+            <p className="near">{t({ hi: "इन इलाक़ों से आते हैं मरीज़:", en: "Patients come from:" })} {NEARBY.map((n) => t(n)).join(" · ")}</p>
           </Reveal>
         </div>
         <Reveal delay={0.15}>
@@ -291,11 +291,14 @@ function FAQ() {
 
 function Book() {
   const t = useT();
+  const { lang } = useContext(LangCtx);
   const [sent, setSent] = useState(false);
   function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const d = Object.fromEntries(new FormData(e.currentTarget)) as Record<string, string>;
-    const msg = `नमस्ते HMS होम्योपैथी सेंटर, मैं अपॉइंटमेंट बुक करना चाहता/चाहती हूँ।\nनाम: ${d.name}\nफ़ोन: ${d.phone}\nइलाक़ा: ${d.city}\nतारीख: ${d.date}\nप्रकार: ${d.type}\nसमस्या: ${d.concern || "-"}`;
+    const msg = lang === "hi"
+      ? `नमस्ते HMS होम्योपैथी सेंटर, मैं अपॉइंटमेंट बुक करना चाहता/चाहती हूँ।\nनाम: ${d.name}\nफ़ोन: ${d.phone}\nइलाक़ा: ${d.city}\nतारीख: ${d.date}\nप्रकार: ${d.type}\nसमस्या: ${d.concern || "-"}`
+      : `Hello HMS Homeopathy Center, I'd like to book an appointment.\nName: ${d.name}\nPhone: ${d.phone}\nArea: ${d.city}\nDate: ${d.date}\nType: ${d.type}\nConcern: ${d.concern || "-"}`;
     window.open(wa(msg), "_blank");
     setSent(true);
   }
@@ -312,7 +315,7 @@ function Book() {
         <Reveal delay={0.15}>
           <form onSubmit={submit}>
             <div className="two"><label>{t({ hi: "पूरा नाम", en: "Full name" })}<input name="name" required placeholder={t({ hi: "आपका नाम", en: "Your name" })} /></label><label>{t({ hi: "मोबाइल नंबर", en: "Phone" })}<input name="phone" required type="tel" inputMode="tel" placeholder={t({ hi: "मोबाइल नंबर", en: "Mobile number" })} /></label></div>
-            <div className="two"><label>{t({ hi: "इलाक़ा", en: "Area" })}<select name="city">{NEARBY.map((n) => <option key={n}>{n}</option>)}<option>{t({ hi: "अन्य", en: "Other" })}</option></select></label><label>{t({ hi: "पसंदीदा तारीख", en: "Preferred date" })}<input name="date" type="date" required /></label></div>
+            <div className="two"><label>{t({ hi: "इलाक़ा", en: "Area" })}<select name="city">{NEARBY.map((n) => <option key={n.en} value={n.en}>{t(n)}</option>)}<option>{t({ hi: "अन्य", en: "Other" })}</option></select></label><label>{t({ hi: "पसंदीदा तारीख", en: "Preferred date" })}<input name="date" type="date" required /></label></div>
             <label>{t({ hi: "परामर्श का प्रकार", en: "Visit type" })}<select name="type"><option>{t({ hi: "क्लिनिक में (बहादुरगंज)", en: "In-clinic (Bahadurganj)" })}</option><option>{t({ hi: "वीडियो / WhatsApp", en: "Video / WhatsApp" })}</option></select></label>
             <label>{t({ hi: "स्वास्थ्य समस्या (वैकल्पिक)", en: "Health concern (optional)" })}<textarea name="concern" rows={3} placeholder={t({ hi: "संक्षेप में बताएँ कि क्या तकलीफ़ है", en: "Briefly describe what brings you in" })} /></label>
             <button className="btn btn-primary" type="submit" style={{ justifyContent: "center" }}>{t({ hi: "WhatsApp पर अनुरोध भेजें →", en: "Request on WhatsApp →" })}</button>
@@ -333,7 +336,7 @@ const SCHEMA = {
 };
 
 export default function Page() {
-  const [lang, setLangState] = useState<Lang>("hi");
+  const [lang, setLangState] = useState<Lang>("en");
   useEffect(() => { try { const l = localStorage.getItem("hms-lang"); if (l === "en" || l === "hi") setLangState(l); } catch {} }, []);
   useEffect(() => { document.documentElement.lang = lang; }, [lang]);
   const setLang = (l: Lang) => { setLangState(l); try { localStorage.setItem("hms-lang", l); } catch {} };
@@ -348,7 +351,7 @@ export default function Page() {
       <footer><div className="wrap"><span>© {new Date().getFullYear()} HMS Homeopathy Center · {hi ? "बहादुरगंज, किशनगंज, बिहार" : "Bahadurganj, Kishanganj, Bihar"}</span><span>{hi ? "तस्वीरें: Pexels" : "Photos: Pexels"}</span></div></footer>
       <div className="mbar">
         <a href={tel}>📞 {hi ? "कॉल" : "Call"}</a>
-        <a href={wa("नमस्ते HMS होम्योपैथी सेंटर")} target="_blank" rel="noreferrer">💬 WhatsApp</a>
+        <a href={wa("Hello HMS Homeopathy Center")} target="_blank" rel="noreferrer">💬 WhatsApp</a>
         <a href="#book" className="b">{hi ? "बुक करें" : "Book"}</a>
       </div>
     </LangCtx.Provider>

@@ -8,12 +8,12 @@ const hiSerif = Tiro_Devanagari_Hindi({ subsets: ["devanagari", "latin"], weight
 const sans = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
 
 export const metadata: Metadata = {
-  title: "HMS Homeopathy Center | सीमांचल का होम्योपैथी केंद्र · Purnia, Araria, Kishanganj, Katihar",
+  title: "HMS Homeopathy Center | Homeopathic Clinic in Bahadurganj, Kishanganj, Bihar",
   description:
-    "HMS होम्योपैथी सेंटर — सीमांचल (पूर्णिया, अररिया, किशनगंज, कटिहार) के परिवारों के लिए सौम्य, व्यक्तिगत होम्योपैथिक उपचार। HMS Homeopathy Center serves Seemanchal, Bihar. अपॉइंटमेंट बुक करें।",
+    "HMS Homeopathy Center in Bahadurganj, Kishanganj (Bihar) offers gentle, personalised homeopathic care for children, women and elders across Seemanchal. Book an appointment today. HMS होम्योपैथी सेंटर, बहादुरगंज।",
   openGraph: {
-    title: "HMS Homeopathy Center — सीमांचल",
-    description: "सीमांचल के हर परिवार के लिए सौम्य होम्योपैथिक उपचार।",
+    title: "HMS Homeopathy Center — Bahadurganj, Kishanganj",
+    description: "Gentle homeopathic care for every Seemanchal family.",
     type: "website",
   },
 };
@@ -21,7 +21,7 @@ export const viewport: Viewport = { themeColor: "#f6f1e7" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="hi" className={`${serif.variable} ${sans.variable} ${hiSans.variable} ${hiSerif.variable}`}>
+    <html lang="en" className={`${serif.variable} ${sans.variable} ${hiSans.variable} ${hiSerif.variable}`}>
       <body>{children}</body>
     </html>
   );
