@@ -151,3 +151,22 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;
   .book{margin:0 8px 8px;border-radius:28px}form{padding:22px}
 }
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+:root[lang="hi"]{--serif:var(--font-hiserif),Georgia,serif;--sans:var(--font-hisans),var(--font-sans),system-ui,sans-serif}
+:root[lang="hi"] h1,:root[lang="hi"] h2,:root[lang="hi"] h3{letter-spacing:0;line-height:1.28}
+:root[lang="hi"] h1 em,:root[lang="hi"] h2 em{font-style:normal}
+:root[lang="hi"] .eyebrow,:root[lang="hi"] .logo small{letter-spacing:.04em;text-transform:none}
+:root[lang="hi"] .marquee .track{font-style:normal}
+.lang{display:inline-flex;background:var(--sand);border-radius:999px;padding:3px}
+.lang button{padding:7px 14px;border-radius:999px;font-size:.82rem;font-weight:600;color:var(--moss);transition:all .25s}
+.lang button.on{background:var(--moss);color:var(--paper)}
+.dist{background:linear-gradient(160deg,#e3ecd9,#f3dcc7)}
+.dgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:44px}
+.dcard{background:var(--paper);border-radius:26px;padding:30px 22px;text-align:center;transition:transform .35s,box-shadow .35s;position:relative;overflow:hidden}
+.dcard:hover{transform:translateY(-8px) rotate(-1deg);box-shadow:0 28px 44px -26px rgba(29,50,38,.5)}
+.dcard .pin{font-size:1.8rem;display:block;margin-bottom:10px}
+.dcard h3{font-size:1.5rem}.dcard small{color:var(--muted)}
+.btn-call{background:var(--clay);color:#fff}.btn-call:hover{transform:translateY(-3px)}
+.callfab{position:fixed;left:22px;bottom:22px;z-index:40;display:none}
+@media(max-width:960px){.dgrid{grid-template-columns:1fr 1fr}.callfab{display:inline-flex}}
+@media(max-width:620px){.dgrid{grid-template-columns:1fr}}
