@@ -1,8 +1,8 @@
 export type Bi = { hi: string; en: string };
 
 export const CLINIC = {
-  phone: "+91 00000 00000", // TODO: real number
-  whatsapp: "910000000000", // TODO: country code + number, no symbols
+  phone: "+91 77399 41073",
+  whatsapp: "917739941073", // country code + number, no symbols
   email: "hello@hmshomeopathy.example",
   town: { hi: "बहादुरगंज, ज़िला किशनगंज, बिहार", en: "Bahadurganj, Kishanganj, Bihar" } as Bi,
   landmark: { hi: "सटीक पता / लैंडमार्क यहाँ जोड़ें", en: "Add exact address / landmark here" } as Bi,
