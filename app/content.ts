@@ -13,37 +13,37 @@ export const CLINIC = {
 
 export const CONDITIONS: { img: string; title: Bi; why: Bi; signs: Bi[]; }[] = [
   {
-    img: "/images/grandma.jpg",
+    img: "/images/child.jpg",
     title: { hi: "बच्चों की बार-बार होने वाली तकलीफ़ें", en: "Children's recurring ailments" },
     why: { hi: "नमी और बदलते मौसम में बच्चे जल्दी बीमार पड़ते हैं।", en: "Humidity and changing weather make children fall ill again and again." },
     signs: [{ hi: "बार-बार सर्दी-खाँसी, टॉन्सिल", en: "Frequent colds, cough, tonsillitis" }, { hi: "पेट दर्द, दस्त, भूख की कमी", en: "Stomach pain, loose motions, poor appetite" }, { hi: "कमज़ोरी और कम वज़न", en: "Weakness and low weight" }, { hi: "बिस्तर गीला करना", en: "Bed-wetting" }],
   },
   {
-    img: "/images/hills.jpg",
+    img: "/images/allergy.jpg",
     title: { hi: "एलर्जी, साइनस और साँस की तकलीफ़", en: "Allergy, sinus & breathing trouble" },
     why: { hi: "धूल, पराग, भूसे की धूल और बरसात की नमी इसे बढ़ाती है।", en: "Dust, pollen, husk dust and monsoon dampness make it worse." },
     signs: [{ hi: "छींकें, नाक बहना, बंद नाक", en: "Sneezing, runny or blocked nose" }, { hi: "पुरानी खाँसी, सीने में जकड़न", en: "Long-standing cough, chest tightness" }, { hi: "साइनस का भारीपन और सिरदर्द", en: "Sinus heaviness and headache" }, { hi: "मौसम बदलते ही दमे जैसी तकलीफ़", en: "Asthma-like symptoms with season change" }],
   },
   {
-    img: "/images/hero-field.jpg",
+    img: "/images/skin.jpg",
     title: { hi: "त्वचा रोग और फंगल संक्रमण", en: "Skin & fungal infections" },
     why: { hi: "बरसात-बाढ़ के मौसम में खेत और पानी में काम, गीले कपड़ों से बढ़ता है।", en: "Work in fields and standing water and damp clothes during monsoon and floods." },
     signs: [{ hi: "दाद, खाज-खुजली", en: "Ringworm, itching" }, { hi: "एक्ज़िमा, फुंसी-मुंहासे", en: "Eczema, boils, acne" }, { hi: "रूसी और बाल झड़ना", en: "Dandruff and hair fall" }, { hi: "तलवों-उँगलियों में सड़न/दरारें", en: "Cracked or rotting feet and toes" }],
   },
   {
-    img: "/images/herbs1.jpg",
+    img: "/images/digestive.jpg",
     title: { hi: "पेट और पाचन की समस्याएँ", en: "Stomach & digestive problems" },
     why: { hi: "दूषित पानी, बाढ़ के बाद की गंदगी और मसालेदार खान-पान से।", en: "From contaminated water, post-flood hygiene issues and spicy diets." },
     signs: [{ hi: "एसिडिटी, गैस, खट्टी डकार", en: "Acidity, gas, sour belching" }, { hi: "कब्ज़ और बवासीर", en: "Constipation and piles" }, { hi: "दस्त-पेचिश के बाद कमज़ोरी", en: "Weakness after diarrhoea or dysentery" }, { hi: "भूख न लगना", en: "Loss of appetite" }],
   },
   {
-    img: "/images/family.jpg",
+    img: "/images/women.jpg",
     title: { hi: "महिलाओं की सेहत", en: "Women's health" },
     why: { hi: "पोषण की कमी, घर-खेती का भारी काम और तनाव से।", en: "Due to poor nutrition, heavy household and farm work, and stress." },
     signs: [{ hi: "अनियमित या दर्दनाक माहवारी, PCOS", en: "Irregular or painful periods, PCOS" }, { hi: "सफ़ेद पानी की शिकायत", en: "White discharge" }, { hi: "थकान, कमज़ोरी, खून की कमी जैसे लक्षण", en: "Fatigue, weakness, anaemia-like symptoms" }, { hi: "प्रसव के बाद कमज़ोरी, बाल झड़ना", en: "Post-delivery weakness, hair fall" }],
   },
   {
-    img: "/images/elder.jpg",
+    img: "/images/joints.jpg",
     title: { hi: "जोड़ों का दर्द और बुज़ुर्गों की देखभाल", en: "Joint pain & elder care" },
     why: { hi: "मेहनत-मज़दूरी, नमी और ठंड से दर्द बढ़ता है।", en: "Hard physical work, dampness and cold increase pain." },
     signs: [{ hi: "घुटने, कमर और गर्दन का दर्द", en: "Knee, back and neck pain" }, { hi: "गठिया और जकड़न", en: "Arthritis and stiffness" }, { hi: "नींद की कमी, बेचैनी", en: "Poor sleep, restlessness" }, { hi: "BP-शुगर जैसे रोगों में सहायक देखभाल", en: "Supportive care alongside BP / sugar treatment" }],
@@ -67,9 +67,9 @@ export const STEPS: { t: Bi; d: Bi }[] = [
 ];
 
 export const STORIES: { img: string; q: Bi; who: Bi }[] = [
-  { img: "/images/grandma.jpg", q: { hi: "मेरे पोते को हर महीने सर्दी-खाँसी हो जाती थी। यहाँ डॉक्टर ने आराम से पूरी बात पूछी, और अब वह पहले से बहुत कम बीमार पड़ता है।", en: "My grandson caught a cold every month. The doctor listened patiently here, and he now falls sick far less." }, who: { hi: "दादी, बहादुरगंज (नमूना)", en: "Grandmother, Bahadurganj (sample)" } },
-  { img: "/images/farmer.jpg", q: { hi: "बरसात में खेत के काम से पैरों में खुजली-दाद रहती थी। यहाँ इलाज और परहेज़ की सलाह से काफ़ी राहत मिली।", en: "Field work in monsoon left me with itching and ringworm. Treatment and advice here gave me good relief." }, who: { hi: "किसान, किशनगंज (नमूना)", en: "Farmer, Kishanganj (sample)" } },
-  { img: "/images/family.jpg", q: { hi: "मासिक की परेशानी में किसी ने इतने भरोसे से बात नहीं की थी। फॉलो-अप WhatsApp पर भी हो जाता है, यह सबसे सुविधाजनक है।", en: "No one had spoken so reassuringly about my period problems. Follow-ups on WhatsApp are very convenient." }, who: { hi: "गृहिणी, ठाकुरगंज (नमूना)", en: "Homemaker, Thakurganj (sample)" } },
+  { img: "/images/child.jpg", q: { hi: "मेरे पोते को हर महीने सर्दी-खाँसी हो जाती थी। यहाँ डॉक्टर ने आराम से पूरी बात पूछी, और अब वह पहले से बहुत कम बीमार पड़ता है।", en: "My grandson caught a cold every month. The doctor listened patiently here, and he now falls sick far less." }, who: { hi: "दादी, बहादुरगंज (नमूना)", en: "Grandmother, Bahadurganj (sample)" } },
+  { img: "/images/skin.jpg", q: { hi: "बरसात में खेत के काम से पैरों में खुजली-दाद रहती थी। यहाँ इलाज और परहेज़ की सलाह से काफ़ी राहत मिली।", en: "Field work in monsoon left me with itching and ringworm. Treatment and advice here gave me good relief." }, who: { hi: "किसान, किशनगंज (नमूना)", en: "Farmer, Kishanganj (sample)" } },
+  { img: "/images/women.jpg", q: { hi: "मासिक की परेशानी में किसी ने इतने भरोसे से बात नहीं की थी। फॉलो-अप WhatsApp पर भी हो जाता है, यह सबसे सुविधाजनक है।", en: "No one had spoken so reassuringly about my period problems. Follow-ups on WhatsApp are very convenient." }, who: { hi: "गृहिणी, ठाकुरगंज (नमूना)", en: "Homemaker, Thakurganj (sample)" } },
 ];
 
 export const FAQS: { q: Bi; a: Bi }[] = [
